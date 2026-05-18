@@ -1,0 +1,7 @@
+flask
+gunicorn
+flask-cors
+pillow
+numpy==1.23.5
+tensorflow==2.10.0
+huggingface_hub==1.15.0
