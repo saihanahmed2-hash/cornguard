@@ -3,6 +3,7 @@
 import os
 import sys
 import json
+import gc
 
 import logging
 import numpy as np
@@ -18,11 +19,22 @@ if sys.stdout.encoding != 'utf-8':
 import tensorflow as tf
 logging.getLogger("tensorflow").setLevel(logging.ERROR)
 
+
 # GPU memory growth
 gpus = tf.config.list_physical_devices("GPU")
 if gpus:
     for gpu in gpus:
         tf.config.experimental.set_memory_growth(gpu, True)
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  # force CPU only
+
+tf.config.set_visible_devices([], 'GPU')
+
+# Limit TF memory growth
+gpus = tf.config.experimental.list_physical_devices('GPU')
+tf.config.threading.set_inter_op_parallelism_threads(1)
+tf.config.threading.set_intra_op_parallelism_threads(1)
 
 from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.applications.efficientnet import preprocess_input
@@ -155,6 +167,7 @@ if not WEIGHTS_PATH.exists():
 
 model.load_weights(str(WEIGHTS_PATH))
 print(f"✅ Loaded weights from {WEIGHTS_PATH}")
+gc.collect()  # after model loads
 print("🌽 Model ready for inference!")
 
 from flask import Flask
