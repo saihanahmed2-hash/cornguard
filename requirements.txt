@@ -2,6 +2,6 @@ flask
 gunicorn
 flask-cors
 pillow
-numpy==1.23.5
-tensorflow-cpu
+numpy==1.24.3
+tensorflow==2.12.0
 huggingface_hub==1.15.0
